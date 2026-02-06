@@ -1,0 +1,45 @@
+## Ignore Visual Studio / VS Code files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build results
+bin/
+obj/
+out/
+
+## .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Logs
+*.log
+
+## ASP.NET Core
+wwwroot/lib/
+wwwroot/dist/
+
+## Environment-specific files
+appsettings.Development.json
+appsettings.Staging.json
+appsettings.Production.json
+
+## Secrets
+secrets.json
+
+## Rider / JetBrains
+.idea/
+*.sln.iml
+
+## OS generated files
+.DS_Store
+Thumbs.db
+
+## Package files
+*.nupkg
+*.snupkg
+packages/
