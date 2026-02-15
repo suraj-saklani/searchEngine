@@ -38,16 +38,30 @@ namespace searchEngineWebApp.Service.IndexingService
                         Document = fileName,
                         Count = tokenWithCount[token.Key]
                     });
-                    articlaData.idf[token.Key] = Math.Log((double)articlaData.documents.Count / 
-                        articlaData.articleIndex[token.Key].Count);
+                    articlaData.idf[token.Key] = Math.Log((double)(articlaData.documents.Count+1) / 
+                        (articlaData.articleIndex[token.Key].Count+1)) + 1;
                 }
             }
         }
         public List<Article> Search(string text)
         {
             text = text.Trim().ToLower();
-            var searchTokens = TextProcessor.GenrateToken(text);
-
+            var inputTokens = TextProcessor.GenrateToken(text);
+            var searchTokens = new List<string>(); 
+            foreach(var token in inputTokens)
+            {
+                if (articlaData.articleIndex.ContainsKey(token))
+                {
+                    searchTokens.Add(token);
+                }
+                else
+                {
+                    var suggestion = FindClosestWord(token, articlaData.articleIndex.Keys.ToHashSet());
+                    if(suggestion != null)
+                        searchTokens.Add(suggestion);                    
+                }
+            }
+            
             Dictionary<string, double> doc_tf_idf = new Dictionary<string, double>();
 
             foreach (var token in searchTokens)
@@ -75,6 +89,46 @@ namespace searchEngineWebApp.Service.IndexingService
                 Document = x.Key
             })
             .ToList();
+        }
+
+        static string? FindClosestWord(string token, HashSet<string> vocabulary)
+        {
+            int minDistance = int.MaxValue;
+            string? bestMatch = null;
+
+            foreach (var word in vocabulary)
+            {
+                int distance = Levenshtein(token, word);
+
+                if (distance < minDistance && distance <= 2)
+                {
+                    minDistance = distance;
+                    bestMatch = word;
+                }
+            }
+
+            return bestMatch;
+        }
+        static int Levenshtein(string a, string b)
+        {
+            int[,] dp = new int[a.Length + 1, b.Length + 1];
+
+            for (int i = 0; i <= a.Length; i++) dp[i, 0] = i;
+            for (int j = 0; j <= b.Length; j++) dp[0, j] = j;
+
+            for (int i = 1; i <= a.Length; i++)
+            {
+                for (int j = 1; j <= b.Length; j++)
+                {
+                    int cost = a[i - 1] == b[j - 1] ? 0 : 1;
+                    dp[i, j] = Math.Min(
+                        Math.Min(dp[i - 1, j] + 1, dp[i, j - 1] + 1),
+                        dp[i - 1, j - 1] + cost
+                    );
+                }
+            }
+
+            return dp[a.Length, b.Length];
         }
     }
 }
