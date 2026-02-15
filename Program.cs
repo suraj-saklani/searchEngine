@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using searchEngineWebApp;
 using searchEngineWebApp.Model;
-using searchEngineWebApp.Service;
-using UglyToad.PdfPig.Content;
+using searchEngineWebApp.Service.IndexingService;
 
 var builder = WebApplication.CreateBuilder(args);
 

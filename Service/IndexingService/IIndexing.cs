@@ -1,6 +1,6 @@
 ﻿using searchEngineWebApp.Model;
 
-namespace searchEngineWebApp.Service
+namespace searchEngineWebApp.Service.IndexingService
 {
     public interface IIndexing
     {
